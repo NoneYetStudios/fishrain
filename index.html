@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Fish Rain — A Stab The Finger Game</title>
+  <meta
+    name="description"
+    content="It's raining fish. Unfortunately, it's raining everything else, too. Catch falling fish across 8 bodies of water while dodging bowling balls, pianos, and rogue waves!"
+  />
+  <link rel="stylesheet" href="css/style.css?v=2.1.0" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <h1 class="site-title">🐟 Fish Rain</h1>
+        <a class="brand-link" href="https://stabthefinger.com/" target="_blank" rel="noopener">
+          A Stab The Finger Game
+        </a>
+      </div>
+      <nav class="header-actions" aria-label="Game utility controls">
+        <button type="button" id="btn-help" class="btn-nav">❓ How to Play</button>
+        <button type="button" id="btn-settings" class="btn-nav">⚙️ Controls</button>
+        <button type="button" id="btn-records" class="btn-nav">🏆 Local Records</button>
+        <button type="button" id="btn-global" class="btn-nav">🌍 Global Leaderboard</button>
+        <button type="button" id="btn-mute" class="btn-nav" aria-pressed="false">🔊 Sound: ON</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="app-container">
+    <!-- =====================================================================
+         SCREEN 1: MAIN MENU & LEVEL / ENVIRONMENT SELECTION
+         ===================================================================== -->
+    <section id="screen-menu" aria-label="Fish Rain Main Menu">
+      <div class="hero-banner">
+        <div class="hero-text">
+          <span class="hero-eyebrow">STAB THE FINGER ARCADE PRESENTS</span>
+          <h2>It’s raining fish! Unfortunately, it’s raining everything else, too.</h2>
+          <p>
+            Pilot your trusty fishing skiff from a tiny muddy puddle all the way to the hurricane-tossed
+            Open Ocean. Catch falling bass, rare electric eels, and mythic golden marlins—while dodging
+            bowling balls, refrigerators, grand pianos, and towering rogue waves!
+          </p>
+        </div>
+        <div class="hero-cta-col">
+          <button type="button" id="btn-play-campaign" class="btn-primary btn-hero-play">
+            ⚓ PLAY CAMPAIGN (LEVELS 1–8)
+          </button>
+          <span class="hero-cta-sub">Progress from Puddle to Open Ocean in one epic run!</span>
+        </div>
+      </div>
+
+      <!-- Global Leaderboard Preference Strip -->
+      <div class="setup-section" id="section-leaderboard-pref">
+        <div class="global-pref-card">
+          <div class="global-pref-toggle-row">
+            <label class="pref-toggle-label" for="toggle-auto-submit">
+              <input type="checkbox" id="toggle-auto-submit" class="pref-checkbox" />
+              <span class="pref-toggle-text">Automatically submit scores to global leaderboard</span>
+            </label>
+            <div class="pref-row-actions">
+              <button type="button" id="btn-menu-open-global" class="btn-nav btn-sm">🌍 View Leaderboard</button>
+            </div>
+          </div>
+          <div id="nickname-config-group" class="pref-nickname-group">
+            <div class="nickname-field-row">
+              <label for="input-leaderboard-nickname" class="pref-field-label">Skipper Nickname:</label>
+              <div class="nickname-input-wrap">
+                <input
+                  type="text"
+                  id="input-leaderboard-nickname"
+                  class="pref-nickname-input"
+                  maxlength="16"
+                  autocomplete="off"
+                  placeholder="Choose nickname"
+                  aria-label="Leaderboard nickname"
+                />
+                <button type="button" id="btn-generate-nickname" class="btn-tool btn-sm" title="Generate a random fishing nickname">
+                  🎲 Random
+                </button>
+              </div>
+            </div>
+            <p class="pref-public-notice">
+              📢 <strong>Public Arcade Board:</strong> Your nickname, score, and highest body of water reached are shown on the global leaderboard.
+            </p>
+            <p id="pref-nickname-feedback" class="pref-feedback-msg" role="alert" hidden></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bodies of Water (Level Progression & Quick Play / Practice) -->
+      <div class="setup-section">
+        <div class="section-header-row">
+          <div>
+            <h2 class="section-heading">1. Bodies of Water (Progression &amp; Quick Play)</h2>
+            <p class="section-sub">
+              Complete levels to unlock new bodies of water, or jump directly into any unlocked environment for a Quick Play run!
+            </p>
+          </div>
+          <button type="button" id="btn-unlock-all-levels" class="btn-tool btn-sm" title="Unlock all 8 environments for practice">
+            🔓 Unlock All for Practice
+          </button>
+        </div>
+        <div id="env-cards-container" class="env-cards-grid" role="group" aria-label="Bodies of Water"></div>
+      </div>
+
+      <!-- Control Method Selection -->
+      <div class="setup-section">
+        <h2 class="section-heading">2. Preferred Steering Controls</h2>
+        <div id="control-cards-container" class="control-cards-grid" role="group" aria-label="Steering Control Modes"></div>
+      </div>
+
+      <!-- Field Guide: What's Falling From the Sky? -->
+      <div class="setup-section">
+        <h2 class="section-heading">3. Meteorological Field Guide</h2>
+        <div class="field-guide-grid">
+          <div class="guide-card guide-fish">
+            <h3>🐟 Catchable Fish (Points + Combo)</h3>
+            <p>
+              <strong>Common</strong> (Bluegill, Perch, Bass, Trout, Catfish: <code>50–110</code> pts),
+              <strong>Uncommon</strong> (Pike, Walleye, Salmon, Snapper, Mahi-Mahi: <code>180–300</code> pts),
+              <strong>Rare</strong> (Electric Eel, Bluefin Tuna, Swordfish, Golden Koi: <code>420–620</code> pts), and
+              <strong>Legendary</strong> (Anglerfish, Coelacanth, Kraken-Bass, Golden Marlin: <code>900–2,000</code> pts)!
+            </p>
+          </div>
+          <div class="guide-card guide-bonus">
+            <h3>⭐ Special Collectibles (Buffs &amp; Lives)</h3>
+            <p>
+              <strong>Deluxe Tackle Box</strong> (+45% Wide Net for 8s),
+              <strong>Scalding Coffee Thermos</strong> (Turbo Boat Speed &amp; current resistance for 8s),
+              <strong>Pirate Doubloon</strong> (+500 pts &amp; +2 Combo), and
+              <strong>Coast Guard Life Ring</strong> (+1 Hull Life up to 5)!
+            </p>
+          </div>
+          <div class="guide-card guide-neutral">
+            <h3>🥾 Harmless Junk (0 Pts, Keeps Combo!)</h3>
+            <p>
+              <strong>Waterlogged Left Boots</strong>, <strong>Rubber Ducks</strong>,
+              <strong>Folding Lawn Chairs</strong>, <strong>Soggy Pizza Slices</strong>, and
+              <strong>Extended Warranty Bottles</strong> earn <code>0</code> points without hurting your boat or breaking your combo. Catch 3 for a bonus achievement!
+            </p>
+          </div>
+          <div class="guide-card guide-hazard">
+            <h3>💥 Falling Hazards (-1 Life &amp; Resets Combo)</h3>
+            <p>
+              Dodge <strong>Red Bricks</strong>, <strong>Tires</strong>, <strong>16-lb Bowling Balls</strong>,
+              <strong>ACME Anvils</strong>, <strong>Avocado Refrigerators</strong>, <strong>Grand Pianos</strong>,
+              and occasional giant <strong>Fiberglass Cows</strong> &amp; <strong>Weather Satellites</strong>!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SCREEN 2: ACTIVE GAMEPLAY (HUD + CANVAS + OVERLAYS + TOUCH BAR)
+         ===================================================================== -->
+    <section id="screen-game" aria-label="Active Fish Rain Gameplay" hidden>
+      <!-- Top Gameplay HUD -->
+      <div class="game-hud-bar">
+        <div class="hud-block hud-block-env">
+          <span class="hud-eyebrow" id="hud-mode-label">CAMPAIGN • LEVEL 1/8</span>
+          <strong id="hud-env-name" class="hud-env-title">💧 Muddy Driveway Puddle</strong>
+          <span id="hud-conditions" class="hud-sub">Calm Water • No Wind</span>
+        </div>
+
+        <div class="hud-block hud-block-score">
+          <span class="hud-eyebrow">Score</span>
+          <div id="hud-score" class="hud-score-value">0</div>
+          <span id="hud-combo" class="hud-combo-badge">Combo: 0 (1.0×)</span>
+        </div>
+
+        <div class="hud-block hud-block-progress">
+          <div class="progress-header">
+            <span class="hud-eyebrow">Level Quota Progress</span>
+            <strong id="hud-progress-text">0% (0 / 10 Fish)</strong>
+          </div>
+          <div class="progress-bar-track" role="progressbar" aria-label="Level completion progress">
+            <div id="hud-progress-fill" class="progress-bar-fill" style="width: 0%;"></div>
+          </div>
+          <div id="hud-buffs" class="hud-buffs-row">Ready to catch!</div>
+        </div>
+
+        <div class="hud-block hud-block-lives">
+          <span class="hud-eyebrow">Hull Integrity</span>
+          <div id="hud-lives" class="hud-lives-icons" aria-label="Lives remaining">❤️❤️❤️</div>
+          <span class="hud-sub">Max 5 Lives</span>
+        </div>
+
+        <div class="hud-controls">
+          <button type="button" id="btn-switch-to-buttons" class="btn-tool btn-sm" hidden>
+            🎮 Switch to Buttons
+          </button>
+          <button type="button" id="btn-pause" class="btn-nav">⏸️ Pause</button>
+          <button type="button" id="btn-abandon-run" class="btn-nav">🏠 Menu</button>
+        </div>
+      </div>
+
+      <!-- Canvas Stage -->
+      <div class="canvas-stage-wrapper">
+        <canvas
+          id="game-canvas"
+          width="960"
+          height="560"
+          aria-label="Fish Rain 2D Arcade Canvas"
+        ></canvas>
+      </div>
+
+      <!-- Overlay 1: Level Introduction -->
+      <div id="overlay-level-intro" class="stage-overlay" role="dialog" aria-labelledby="intro-env-title" hidden>
+        <div class="overlay-card">
+          <span id="intro-level-badge" class="overlay-badge">BODY OF WATER 1 OF 8</span>
+          <h2 id="intro-env-title" class="overlay-title">💧 Muddy Driveway Puddle</h2>
+          <p id="intro-env-tagline" class="overlay-tagline"></p>
+          <div class="overlay-challenge-box">
+            <strong>⚠️ Environment Forecast &amp; Hazards:</strong>
+            <p id="intro-env-challenge"></p>
+          </div>
+          <div id="intro-env-targets" class="overlay-targets-strip"></div>
+          <div class="overlay-actions">
+            <button type="button" id="btn-start-level" class="btn-primary">
+              ⚓ CAST OFF &amp; CATCH FISH!
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overlay 2: Level Completion -->
+      <div id="overlay-level-complete" class="stage-overlay" role="dialog" aria-labelledby="complete-title" hidden>
+        <div class="overlay-card">
+          <span class="overlay-badge badge-success">LEVEL CLEARED!</span>
+          <h2 id="complete-title" class="overlay-title">Body of Water Conquered!</h2>
+          <div id="complete-stats-grid" class="overlay-stats-grid"></div>
+          <div class="overlay-actions">
+            <button type="button" id="btn-next-level" class="btn-primary">
+              🌊 NEXT BODY OF WATER →
+            </button>
+            <button type="button" id="btn-finish-quickplay" class="btn-nav">
+              🏁 Finish &amp; Submit Score
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overlay 3: Pause Screen -->
+      <div id="overlay-pause" class="stage-overlay" role="dialog" aria-labelledby="pause-title" hidden>
+        <div class="overlay-card">
+          <span class="overlay-badge">GAME PAUSED</span>
+          <h2 id="pause-title" class="overlay-title">⚓ Anchored &amp; Paused</h2>
+          <p class="overlay-tagline">The fish have politely paused in mid-air while you adjust your gear.</p>
+          <div class="overlay-actions">
+            <button type="button" id="btn-resume-game" class="btn-primary">▶️ RESUME FISHING</button>
+            <button type="button" id="btn-pause-settings" class="btn-nav">⚙️ Controls &amp; Tilt Calibration</button>
+            <button type="button" id="btn-pause-restart" class="btn-nav">🔄 Restart Run</button>
+            <button type="button" id="btn-pause-menu" class="btn-nav">🏠 Main Menu</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- On-Screen Touch Buttons & Active Control Bar -->
+      <div class="touch-controls-bar" aria-label="On-screen boat steering controls">
+        <button type="button" id="btn-touch-left" class="btn-touch-steer" aria-label="Steer Boat Left">
+          ◀ STEER LEFT
+        </button>
+        <div class="touch-center-info">
+          <span id="touch-mode-indicator" class="touch-mode-pill">Controls: Keys / Buttons</span>
+          <div id="tilt-quick-bar" class="tilt-quick-actions" hidden>
+            <button type="button" id="btn-quick-calibrate" class="btn-tool btn-sm">🎯 Calibrate Center</button>
+            <button type="button" id="btn-quick-disable-tilt" class="btn-nav btn-sm">Switch to Buttons</button>
+          </div>
+        </div>
+        <button type="button" id="btn-touch-right" class="btn-touch-steer" aria-label="Steer Boat Right">
+          STEER RIGHT ▶
+        </button>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SCREEN 3: GAME OVER / VICTORY & LEADERBOARD SUBMISSION
+         ===================================================================== -->
+    <section id="screen-results" class="results-container" aria-label="Run Results" hidden>
+      <div id="results-cards-container"></div>
+
+      <div class="results-actions">
+        <button type="button" id="btn-play-again" class="btn-primary">🔄 PLAY AGAIN</button>
+        <button type="button" id="btn-results-leaderboard" class="btn-nav">🌍 GLOBAL LEADERBOARD</button>
+        <button type="button" id="btn-results-menu" class="btn-nav">🏠 MAIN MENU</button>
+      </div>
+
+      <div id="global-submit-panel" class="global-submit-panel"></div>
+      <div id="results-records-strip" class="results-records-strip"></div>
+    </section>
+  </main>
+
+  <!-- =====================================================================
+       MODAL 1: HOW TO PLAY
+       ===================================================================== -->
+  <div id="modal-help" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="help-modal-title" hidden>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="help-modal-title">❓ How to Play Fish Rain</h2>
+        <button type="button" class="btn-nav" data-close-modal>✕ Close</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          <strong>Premise:</strong> You are in a small fishing boat trying to catch fish falling from the sky.
+          Unfortunately, fish aren't the only things falling!
+        </p>
+        <ul>
+          <li>
+            <strong>Steer Your Boat:</strong> Use <strong>Left/Right Arrow Keys</strong> or <strong>A/D</strong> on a keyboard,
+            hold the <strong>On-Screen Steer Buttons</strong> on mobile, enable smooth <strong>Mouse Follow</strong>,
+            or turn on optional <strong>Mobile Tilt Steering</strong> in Controls.
+          </li>
+          <li>
+            <strong>Build Combos:</strong> Every consecutive fish or bonus item you catch increases your combo streak
+            up to a <strong>3.0× multiplier</strong> (plus +15 end-of-run bonus points per max combo streak).
+          </li>
+          <li>
+            <strong>Harmless Junk vs. Deadly Hazards:</strong> Catching an <em>Old Boot</em>, <em>Rubber Duck</em>, or
+            <em>Lawn Chair</em> awards <code>0</code> points and a funny message—without hurting your hull or resetting your combo.
+            Hitting a <em>Brick</em>, <em>Bowling Ball</em>, <em>Anvil</em>, <em>Fridge</em>, <em>Grand Piano</em>,
+            <em>Fiberglass Cow</em>, or <em>Satellite</em> costs <strong>1 Life</strong> and resets your combo!
+          </li>
+          <li>
+            <strong>8 Bodies of Water:</strong> Progress from the tiny <strong>Puddle</strong> through <strong>Pond</strong>,
+            <strong>Lake</strong>, <strong>Calm River</strong>, <strong>Swift River</strong>, <strong>Bay</strong>,
+            <strong>Coast</strong>, and the <strong>Open Ocean</strong>. Watch out for river currents, squall crosswinds,
+            and towering <strong>Rogue Waves</strong>!
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 2: CONTROLS, MOUSE FOLLOW & MOBILE TILT CALIBRATION
+       ===================================================================== -->
+  <div id="modal-settings" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" hidden>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="settings-modal-title">⚙️ Controls &amp; Tilt Calibration</h2>
+        <button type="button" class="btn-nav" data-close-modal>✕ Close</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Choose your preferred steering method. <strong>Keyboard (Arrow keys / A &amp; D)</strong> and
+          <strong>On-Screen Left/Right Buttons</strong> always remain available at any time!
+        </p>
+
+        <div class="settings-control-group">
+          <label class="settings-radio-card">
+            <input type="radio" name="modal-control-mode" value="HYBRID" checked />
+            <div>
+              <strong>🎮 Keyboard + On-Screen Buttons (Recommended)</strong>
+              <p>Use Left/Right arrows, A/D keys, or hold the large on-screen Left/Right buttons.</p>
+            </div>
+          </label>
+
+          <label class="settings-radio-card">
+            <input type="radio" name="modal-control-mode" value="MOUSE_FOLLOW" />
+            <div>
+              <strong>🖱️ Mouse / Pointer Follow</strong>
+              <p>Move your mouse or slide your finger over the water and your boat smoothly follows horizontally.</p>
+            </div>
+          </label>
+
+          <label class="settings-radio-card">
+            <input type="radio" name="modal-control-mode" value="TILT" />
+            <div>
+              <strong>📱 Mobile Tilt Mode (Accelerometer / Gyro)</strong>
+              <p>Tilt your phone or tablet left and right to steer. Includes one-tap calibration and adjustable sensitivity.</p>
+            </div>
+          </label>
+        </div>
+
+        <div class="tilt-calibration-box">
+          <h3>📱 Mobile Tilt Calibration &amp; Sensitivity</h3>
+          <p id="tilt-status-message" class="tilt-status-text">
+            Tilt mode is optional. Click "Enable &amp; Calibrate Tilt" on a mobile device to request sensor access.
+          </p>
+          <div class="tilt-slider-row">
+            <label for="input-tilt-sensitivity">
+              Tilt Sensitivity: <strong id="label-tilt-sensitivity">1.2×</strong>
+            </label>
+            <input
+              type="range"
+              id="input-tilt-sensitivity"
+              min="0.5"
+              max="2.5"
+              step="0.1"
+              value="1.2"
+            />
+          </div>
+          <div class="tilt-actions-row">
+            <button type="button" id="btn-enable-tilt" class="btn-primary btn-sm">
+              📲 Enable &amp; Request Tilt Permission
+            </button>
+            <button type="button" id="btn-calibrate-tilt" class="btn-tool btn-sm">
+              🎯 Calibrate Neutral Position
+            </button>
+            <button type="button" id="btn-fallback-buttons" class="btn-nav btn-sm">
+              🎮 Switch Back to Buttons
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 3: LOCAL PERSONAL RECORDS
+       ===================================================================== -->
+  <div id="modal-records" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="records-modal-title" hidden>
+    <div class="modal-dialog modal-dialog-wide">
+      <div class="modal-header">
+        <h2 id="records-modal-title">🏆 Local Angler Records</h2>
+        <button type="button" class="btn-nav" data-close-modal>✕ Close</button>
+      </div>
+      <div id="records-modal-content" class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" id="btn-reset-records" class="btn-nav btn-danger">
+          🗑️ Reset Local Records
+        </button>
+        <button type="button" class="btn-nav" data-close-modal>Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 4: GLOBAL LEADERBOARD
+       ===================================================================== -->
+  <div id="modal-global" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="global-modal-title" hidden>
+    <div class="modal-dialog modal-dialog-wide">
+      <div class="modal-header">
+        <h2 id="global-modal-title">🌍 Global Fish Rain Leaderboard</h2>
+        <button type="button" class="btn-nav" data-close-modal>✕ Close</button>
+      </div>
+      <p class="global-scope-note">
+        <strong>SQLite-Backed Global Leaderboard</strong> across all players. Filter by Body of Water, Game Mode, or Rank Order!
+      </p>
+
+      <div class="global-pref-card global-pref-card-modal">
+        <div class="global-pref-toggle-row">
+          <label class="pref-toggle-label" for="toggle-auto-submit-modal">
+            <input type="checkbox" id="toggle-auto-submit-modal" class="pref-checkbox" />
+            <span class="pref-toggle-text">Automatically submit scores to global leaderboard</span>
+          </label>
+        </div>
+        <div id="nickname-config-group-modal" class="pref-nickname-group">
+          <div class="nickname-field-row">
+            <label for="input-leaderboard-nickname-modal" class="pref-field-label">Skipper Nickname:</label>
+            <div class="nickname-input-wrap">
+              <input
+                type="text"
+                id="input-leaderboard-nickname-modal"
+                class="pref-nickname-input"
+                maxlength="16"
+                autocomplete="off"
+                placeholder="Choose nickname"
+                aria-label="Leaderboard nickname"
+              />
+              <button type="button" id="btn-generate-nickname-modal" class="btn-tool btn-sm">🎲 Random</button>
+            </div>
+          </div>
+          <p id="pref-nickname-feedback-modal" class="pref-feedback-msg" role="alert" hidden></p>
+        </div>
+      </div>
+
+      <div class="global-filters">
+        <label>Body of Water
+          <select id="global-filter-env"></select>
+        </label>
+        <label>Mode
+          <select id="global-filter-mode">
+            <option value="all">All Modes</option>
+            <option value="CAMPAIGN">Campaign</option>
+            <option value="QUICK_PLAY">Quick Play</option>
+          </select>
+        </label>
+        <label>Rank By
+          <select id="global-filter-sort">
+            <option value="score">Overall High Score</option>
+            <option value="level">Highest Level Reached</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="global-status" class="global-status" role="status" aria-live="polite"></div>
+
+      <div class="global-table-wrap">
+        <table class="records-table global-table" aria-label="Global leaderboard">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Skipper</th>
+              <th scope="col">Score</th>
+              <th scope="col">Highest Water</th>
+              <th scope="col">Fish</th>
+              <th scope="col">Best Catch</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          <tbody id="global-table-body"></tbody>
+        </table>
+      </div>
+
+      <div class="global-pager">
+        <button type="button" id="global-prev" class="btn-nav">← Previous</button>
+        <span id="global-page-info">Page 1</span>
+        <button type="button" id="global-next" class="btn-nav">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js?v=2.1.0"></script>
+</body>
+</html>

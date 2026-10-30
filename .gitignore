@@ -1,0 +1,60 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# SQLite databases, journals & secret keys (runtime state)
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+*.db
+*.key
+secret.key
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal
+data/*.key
+api/*.sqlite
+api/*.sqlite-shm
+api/*.sqlite-wal
+api/*.key
+
+# Environment & local credentials
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test, browser automation & temporary files
+.tmp_chrome_profile/
+.tmp_*/
+coverage/
+.nyc_output/
+
+# Deployment / archive bundles
+*.zip
+*.tar.gz
+
+# Operating System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE & Editor files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo
+*~

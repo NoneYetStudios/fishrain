@@ -1,0 +1,17 @@
+{
+  "name": "fishrain",
+  "version": "1.0.0",
+  "description": "Fish Rain — It's raining fish. Unfortunately, it's raining everything else, too. A Stab The Finger Arcade Game.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "start": "node --no-warnings server.js",
+    "test": "node tests/game_logic.mjs && node --no-warnings tests/leaderboard_api.mjs",
+    "test:game": "node tests/game_logic.mjs",
+    "test:leaderboard": "node --no-warnings tests/leaderboard_api.mjs",
+    "test:e2e": "node --no-warnings tests/e2e_browser_test.mjs"
+  }
+}
